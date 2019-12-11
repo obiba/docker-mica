@@ -7,6 +7,14 @@ if [ ! -d $MICA_HOME/conf ]
 	cp -r /etc/mica2/* $MICA_HOME/conf
 fi
 
+# Install default plugins
+if [ ! -d $MICA_HOME/plugins ]
+then
+  echo "Preparing default plugins in $MICA_HOME ..."
+  mkdir -p $MICA_HOME/plugins
+  cp -r $DEFAULT_PLUGINS_DIR/* $MICA_HOME/plugins
+fi
+
 # Check if 1st run. Then configure database.
 if [ -e /opt/mica/bin/first_run.sh ]
     then
