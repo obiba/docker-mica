@@ -2,7 +2,7 @@ version: '3'
 services:
         mica:
                 #build: .
-                image: obiba/mica:3.8
+                image: obiba/mica:templates
                 ports:
                         - "8845:8445"
                         - "8882:8082"
