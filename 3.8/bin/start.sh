@@ -15,6 +15,9 @@ if [ ! -d $MICA_HOME/conf ]
 	then
 	mkdir -p $MICA_HOME/conf
 	cp -r /usr/share/mica2/conf/* $MICA_HOME/conf
+	# So that application is accessible from outside of docker
+	sed s/address:\ localhost//g $MICA_HOME/conf/application.yml > /tmp/application.yml && \
+	    mv /tmp/application.yml $MICA_HOME/conf/application.yml
 fi
 
 # Check if 1st run. Then configure database.
