@@ -4,8 +4,8 @@ services:
                 build: .
                 #image: obiba/mica:templates
                 ports:
-                        - "8845:8445"
-                        - "8882:8082"
+                        - "8835:8445"
+                        - "8872:8082"
                 links:
                         - mongo
                 environment:
@@ -19,14 +19,14 @@ services:
                         - AGATE_HOST=agate
                         - AGATE_PORT=8444
                 volumes:
-                        - /tmp/mica:/srv
+                        - /tmp/templates-mica:/srv
         mongo:
                 image: mongo
         opal:
                 image: obiba/opal
                 ports:
-                        - "8843:8443"
-                        - "8880:8080"
+                        - "8833:8443"
+                        - "8870:8080"
                 links:
                         - mongo
                 environment:
@@ -36,17 +36,19 @@ services:
                         - AGATE_HOST=agate
                         - AGATE_PORT=8444
                 volumes:
-                        - /tmp/opal-mica:/srv
+                        - /tmp/templates-opal:/srv
         agate:
-                image: obiba/agate
+                image: obiba/agate:1.6
                 ports:
-                        - "8844:8444"
-                        - "8881:8081"
+                        - "8834:8444"
+                        - "8871:8081"
                 links:
                         - mongo
                 environment:
                         - AGATE_ADMINISTRATOR_PASSWORD=password
                         - MONGO_HOST=mongo
                         - MONGO_PORT=27017
+                        - RECAPTCHA_SITE_KEY=6Lfo7gYTAAAAAOyl8_MHuH-AVBzRDtpIuJrjL3Pb
+                        - RECAPTCHA_SECRET_KEY=6Lfo7gYTAAAAADym-vSDvPBeBCXaxIprA0QXLk_b
                 volumes:
-                        - /tmp/agate-mica:/srv
+                        - /tmp/templates-agate:/srv
