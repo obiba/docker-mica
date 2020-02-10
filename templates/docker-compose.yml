@@ -1,52 +1,52 @@
 version: '3'
 services:
-  mica:
-    #build: .
-    image: obiba/mica:templates
-    ports:
-      - "8845:8445"
-      - "8882:8082"
-    links:
-      - mongo
-    environment:
-      - JAVA_OPTS=-Xmx2G
-      - MICA_ADMINISTRATOR_PASSWORD=password
-      - MICA_ANONYMOUS_PASSWORD=password
-      - MONGO_HOST=mongo
-      - MONGO_PORT=27017
-      - OPAL_HOST=opal
-      - OPAL_PORT=8443
-      - AGATE_HOST=agate
-      - AGATE_PORT=8444
-    volumes:
-      - /tmp/mica:/srv
-    mongo:
-      image: mongo
-    opal:
-      image: obiba/opal
-      ports:
-        - "8843:8443"
-        - "8880:8080"
-      links:
-        - mongo
-      environment:
-        - OPAL_ADMINISTRATOR_PASSWORD=password
-        - MONGO_HOST=mongo
-        - MONGO_PORT=27017
-        - AGATE_HOST=agate
-        - AGATE_PORT=8444
-      volumes:
-        - /tmp/opal:/srv
-    agate:
-      image: obiba/agate
-      ports:
-        - "8844:8444"
-        - "8881:8081"
-      links:
-        - mongo
-      environment:
-        - AGATE_ADMINISTRATOR_PASSWORD=password
-        - MONGO_HOST=mongo
-        - MONGO_PORT=27017
-      volumes:
-        - /tmp/agate:/srv
+        mica:
+                build: .
+                #image: obiba/mica:templates
+                ports:
+                        - "8845:8445"
+                        - "8882:8082"
+                links:
+                        - mongo
+                environment:
+                        - JAVA_OPTS=-Xmx2G
+                        - MICA_ADMINISTRATOR_PASSWORD=password
+                        - MICA_ANONYMOUS_PASSWORD=password
+                        - MONGO_HOST=mongo
+                        - MONGO_PORT=27017
+                        - OPAL_HOST=opal
+                        - OPAL_PORT=8443
+                        - AGATE_HOST=agate
+                        - AGATE_PORT=8444
+                volumes:
+                        - /tmp/mica:/srv
+        mongo:
+                image: mongo
+        opal:
+                image: obiba/opal
+                ports:
+                        - "8843:8443"
+                        - "8880:8080"
+                links:
+                        - mongo
+                environment:
+                        - OPAL_ADMINISTRATOR_PASSWORD=password
+                        - MONGO_HOST=mongo
+                        - MONGO_PORT=27017
+                        - AGATE_HOST=agate
+                        - AGATE_PORT=8444
+                volumes:
+                        - /tmp/opal-mica:/srv
+        agate:
+                image: obiba/agate
+                ports:
+                        - "8844:8444"
+                        - "8881:8081"
+                links:
+                        - mongo
+                environment:
+                        - AGATE_ADMINISTRATOR_PASSWORD=password
+                        - MONGO_HOST=mongo
+                        - MONGO_PORT=27017
+                volumes:
+                        - /tmp/agate-mica:/srv
