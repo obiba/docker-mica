@@ -9,7 +9,7 @@ FROM obiba/docker-gosu:latest AS gosu
 FROM maven:3.5.4-slim AS building
 
 ENV NVM_DIR /root/.nvm
-ENV NODE_VERSION 4.5.0
+ENV NODE_VERSION 8.17.0
 ENV MICA_BRANCH templates
 
 RUN mkdir -p $NVM_DIR
