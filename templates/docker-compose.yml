@@ -38,7 +38,8 @@ services:
                 volumes:
                         - /tmp/templates-opal:/srv
         agate:
-                image: obiba/agate:1.6
+                build: ../../docker-agate
+                #image: obiba/agate:1.6
                 ports:
                         - "8834:8444"
                         - "8871:8081"
