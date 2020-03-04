@@ -43,6 +43,14 @@ if [ -n "$MONGO_HOST" ]
 	mv -f /tmp/application.yml $MICA_HOME/conf/application.yml
 fi
 
+# Install default plugins
+if [ ! -d $MICA_HOME/plugins ]
+then
+	echo "Preparing default plugins in $MICA_HOME ..."
+	mkdir -p $MICA_HOME/plugins
+	cp -r $DEFAULT_PLUGINS_DIR/* $MICA_HOME/plugins
+fi	
+
 # Configure Opal
 if [ -n "$OPAL_HOST" ]
 	then
