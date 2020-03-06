@@ -36,7 +36,7 @@ RUN source $NVM_DIR/nvm.sh; \
 
 FROM maven:3.5.4-slim AS es-plugin
 
-ENV MICA_SEARCH_ES_BRANCH mica-search-es-1.1.x
+ENV MICA_SEARCH_ES_BRANCH master
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends git
