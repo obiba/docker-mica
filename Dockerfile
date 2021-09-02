@@ -7,7 +7,7 @@
 FROM obiba/docker-gosu:latest AS gosu
 
 # Pull base image
-FROM openjdk:8-jdk-stretch AS server-released
+FROM openjdk:8-jdk-bullseye AS server-released
 
 ENV LANG C.UTF-8
 ENV LANGUAGE C.UTF-8
