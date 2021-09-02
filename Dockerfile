@@ -49,7 +49,7 @@ WORKDIR /projects/mica-search-es
 RUN git checkout $MICA_SEARCH_ES_BRANCH; \
     mvn clean install
 
-FROM openjdk:8-jdk-stretch AS server
+FROM openjdk:8-jdk-bullseye AS server
 
 ENV MICA_ADMINISTRATOR_PASSWORD password
 ENV MICA_ANONYMOUS_PASSWORD password
