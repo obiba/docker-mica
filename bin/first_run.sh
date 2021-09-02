@@ -37,9 +37,20 @@ cat $MICA_HOME/conf/shiro.ini | sed -e "s/^anonymous\s*=.*/anonymous=$anonympw/"
     mv /tmp/shiro.ini $MICA_HOME/conf/shiro.ini
 
 # Configure MongoDB
+if [ -n "$MONGO_DB" ]
+	then
+	sed s,localhost:27017/mica,localhost:27017/$MONGO_DB,g $MICA_HOME/conf/application.yml > /tmp/application.yml
+	mv -f /tmp/application.yml $MICA_HOME/conf/application.yml
+fi
 if [ -n "$MONGO_HOST" ]
 	then
-	sed s/localhost:27017/$MONGO_HOST:$MONGO_PORT/g $MICA_HOME/conf/application.yml > /tmp/application.yml
+	if [ -n "$MONGO_PORT"]
+	then
+		MGP = $MONGO_PORT
+	else
+		MGP = 27017
+	fi
+	sed s/localhost:27017/$MONGO_HOST:$MGP/g $MICA_HOME/conf/application.yml > /tmp/application.yml
 	mv -f /tmp/application.yml $MICA_HOME/conf/application.yml
 fi
 
