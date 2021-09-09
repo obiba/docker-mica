@@ -59,7 +59,7 @@ ENV DEFAULT_PLUGINS_DIR /opt/plugins
 ENV JAVA_OPTS -Xmx2G
 
 WORKDIR /tmp
-COPY --from=building /projects/mica2/mica-dist/target/mica2_*-dist.zip .
+COPY --from=building /projects/mica2/mica-dist/target/mica2-*-dist.zip .
 RUN cd /usr/share/ && \
   unzip -q /tmp/mica2-*-dist.zip && \
   rm /tmp/mica2-*-dist.zip && \
