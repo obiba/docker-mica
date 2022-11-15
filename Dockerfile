@@ -30,7 +30,7 @@ RUN git clone https://github.com/obiba/mica2.git
 WORKDIR /projects/mica2
 
 RUN source $NVM_DIR/nvm.sh; \
-    git checkout $MICA_BRANCH; \
+    git checkout $MICA_BRANCH && \
     mvn clean install && \
     mvn -Prelease org.apache.maven.plugins:maven-antrun-plugin:run@make-deb
 

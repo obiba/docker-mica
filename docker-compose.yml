@@ -14,7 +14,7 @@ services:
                         - MONGO_PORT=27017
                         - OPAL_HOST=opal-demo.obiba.org
                         - OPAL_PORT=443
-                        - AGATE_HOST=agate-demo.obiba.org
+                        - AGATE_HOST=agate-test.obiba.org
                         - AGATE_PORT=443
                 volumes:
                         - ${MICA_DIR}:/srv
