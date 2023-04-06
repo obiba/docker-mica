@@ -73,4 +73,8 @@ if [ -n "$AGATE_HOST" ]
 	then
 	sed s/localhost:8444/$AGATE_HOST:$AGATE_PORT/g $MICA_HOME/conf/application.yml > /tmp/application.yml
 	mv -f /tmp/application.yml $MICA_HOME/conf/application.yml
+else if [ -n "$AGATE_URL" ]
+	then
+	sed s,https://localhost:8444,$AGATE_URL,g $MICA_HOME/conf/application.yml > /tmp/application.yml
+	mv -f /tmp/application.yml $MICA_HOME/conf/application.yml
 fi
