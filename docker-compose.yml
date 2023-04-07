@@ -3,7 +3,6 @@ services:
         mica:
                 image: obiba/mica
                 ports:
-                        - "8845:8445"
                         - "8882:8082"
                 links:
                         - mongo
@@ -13,18 +12,15 @@ services:
                         - MICA_ANONYMOUS_PASSWORD=password
                         - MONGO_HOST=mongo
                         - MONGO_PORT=27017
-                        - OPAL_HOST=opal
-                        - OPAL_PORT=8443
-                        - AGATE_HOST=agate
-                        - AGATE_PORT=8444
+                        - OPAL_URL=http://opal:8080
+                        - AGATE_URL=http://agate:8081
                 volumes:
                         - /tmp/mica:/srv
         mongo:
-                image: mongo
+                image: mongo:6.0
         opal:
                 image: obiba/opal
                 ports:
-                        - "8843:8443"
                         - "8880:8080"
                 links:
                         - mongo
@@ -32,14 +28,12 @@ services:
                         - OPAL_ADMINISTRATOR_PASSWORD=password
                         - MONGO_HOST=mongo
                         - MONGO_PORT=27017
-                        - AGATE_HOST=agate
-                        - AGATE_PORT=8444
+                        - AGATE_URL=http://agate:8081
                 volumes:
                         - /tmp/opal:/srv
         agate:
                 image: obiba/agate
                 ports:
-                        - "8844:8444"
                         - "8881:8081"
                 links:
                         - mongo
