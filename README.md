@@ -1,10 +1,12 @@
 Docker Mica
 ===========
 
-Launch mica container (see Makefile for more details):
+Use [docker compose](https://docs.docker.com/compose/) to launch mica and mongodb applications:
 
-`sudo docker run -d -p 8845:8445 obiba/mica:snapshot`
+```
+docker-compose up
+```
 
 Then connect to:
 
-[https://localhost:8845](https://localhost:8845)
+[http://localhost:8872](http://localhost:8872)

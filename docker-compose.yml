@@ -12,12 +12,9 @@ services:
                         - MICA_ANONYMOUS_PASSWORD=${MICA_ANONYMOUS_PASSWORD}
                         - MONGO_HOST=mongo
                         - MONGO_PORT=27017
-                        - OPAL_HOST=opal-demo.obiba.org
-                        - OPAL_PORT=443
-                        - AGATE_HOST=agate-test.obiba.org
-                        - AGATE_PORT=443
+                        - OPAL_URL=https://opal-demo.obiba.org
+                        - AGATE_URL=https://agate-test.obiba.org
                 volumes:
                         - ${MICA_DIR}:/srv
         mongo:
-                image: mongo
-
+                image: mongo:6.0
