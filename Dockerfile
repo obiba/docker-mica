@@ -6,7 +6,7 @@
 
 FROM obiba/docker-gosu:latest AS gosu
 
-FROM maven:3.5.4-slim AS building
+FROM maven:3.9.1-amazoncorretto-8-debian AS building
 
 ENV NVM_DIR /root/.nvm
 ENV NODE_VERSION 16.15.1
@@ -34,7 +34,7 @@ RUN source $NVM_DIR/nvm.sh; \
     mvn clean install && \
     mvn -Prelease org.apache.maven.plugins:maven-antrun-plugin:run@make-deb
 
-FROM maven:3.5.4-slim AS es-plugin
+FROM maven:3.9.1-amazoncorretto-8-debian AS es-plugin
 
 ENV MICA_SEARCH_ES_BRANCH master
 
