@@ -23,6 +23,7 @@ ENV MICA_VERSION $MICA_BRANCH
 
 RUN \
   apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get upgrade -y && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y apt-transport-https unzip
 
 # Install Mica Server
