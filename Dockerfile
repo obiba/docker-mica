@@ -12,13 +12,11 @@ ENV NVM_DIR /root/.nvm
 ENV NODE_VERSION 16.15.1
 ENV MICA_BRANCH master
 
-RUN mkdir -p $NVM_DIR
-
-SHELL ["/bin/bash", "-c"]
-
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends devscripts debhelper build-essential fakeroot git && \
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash && \
+    apt-get install -y --no-install-recommends devscripts debhelper build-essential fakeroot git curl
+RUN mkdir -p $NVM_DIR
+SHELL ["/bin/bash", "-c"]
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash && \
     source $NVM_DIR/nvm.sh && \
     nvm install $NODE_VERSION && \
     npm install -g bower grunt && \
