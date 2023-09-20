@@ -27,13 +27,18 @@ if [ -e /opt/mica/bin/first_run.sh ]
     mv /opt/mica/bin/first_run.sh /opt/mica/bin/first_run.sh.done
 fi
 
-# Wait for MongoDB to be ready
-if [ -n "$MONGO_HOST" ]
-	then
-	until curl -i http://$MONGO_HOST:$MONGO_PORT/mica &> /dev/null
-	do
-  		sleep 1
-	done
+if [ -z $MONGODB_URI ]
+then
+  #https://docs.spring.io/spring-boot/docs/1.5.6.RELEASE/reference/html/boot-features-external-config.html#boot-features-external-config
+  # According to spring documentation ENV vars have precede before application.yaml properties, so we just set the value instead of fiddling with the yml file
+  if [ -n "$MONGO_USERNAME" ] && [ -n "$MONGO_PASSWORD" ]
+  then
+    export SPRING_DATA_MONGODB_URI=mongodb://$MONGO_USERNAME:$MONGO_PASSWORD@${MONGO_HOST:-mongo}:${MONGO_PORT:-27017}/${MONGO_DB:-mica}?authSource=admin
+  else
+    export SPRING_DATA_MONGODB_URI=mongodb://${MONGO_HOST:-mongo}:${MONGO_PORT:-27017}/${MONGO_DB:-mica}
+  fi
+else
+export SPRING_DATA_MONGODB_URI=$MONGODB_URI
 fi
 
 # Start mica
