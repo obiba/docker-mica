@@ -27,7 +27,7 @@ if [ -e /opt/mica/bin/first_run.sh ]
     mv /opt/mica/bin/first_run.sh /opt/mica/bin/first_run.sh.done
 fi
 
-if [ -z ${MONGODB_URI+x} ]
+if [ -z $MONGODB_URI ]
 then
   #https://docs.spring.io/spring-boot/docs/1.5.6.RELEASE/reference/html/boot-features-external-config.html#boot-features-external-config
   # According to spring documentation ENV vars have precede before application.yaml properties, so we just set the value instead of fiddling with the yml file
