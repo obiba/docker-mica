@@ -7,7 +7,7 @@
 FROM obiba/docker-gosu:latest AS gosu
 
 # Pull base image
-FROM openjdk:8-jdk-bullseye AS server-released
+FROM docker.io/library/eclipse-temurin:8-jre AS server-released
 
 ENV LANG C.UTF-8
 ENV LANGUAGE C.UTF-8
