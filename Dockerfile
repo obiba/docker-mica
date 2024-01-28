@@ -56,6 +56,9 @@ ENV MICA_DIST /usr/share/mica2
 ENV DEFAULT_PLUGINS_DIR /opt/plugins
 ENV JAVA_OPTS -Xmx2G
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends unzip
+
 WORKDIR /tmp
 COPY --from=building /projects/mica2/mica-dist/target/mica2-*-dist.zip .
 RUN cd /usr/share/ && \
