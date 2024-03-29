@@ -4,7 +4,7 @@
 # https://github.com/obiba/docker-mica
 #
 
-FROM obiba/docker-gosu:latest AS gosu
+FROM tianon/gosu:latest AS gosu
 
 # Pull base image
 FROM docker.io/library/eclipse-temurin:8-jre AS server-released
@@ -18,7 +18,7 @@ ENV MICA_ANONYMOUS_PASSWORD password
 ENV MICA_HOME /srv
 ENV JAVA_OPTS -Xmx2G
 
-ENV MICA_BRANCH 5.3.3
+ENV MICA_BRANCH 5.4.0
 ENV MICA_VERSION $MICA_BRANCH
 
 RUN \
