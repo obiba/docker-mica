@@ -4,21 +4,21 @@
 # https://github.com/obiba/docker-mica
 #
 
-FROM obiba/docker-gosu:latest AS gosu
+FROM tianon/gosu:latest AS gosu
 
-FROM maven:3.9.1-amazoncorretto-8-debian AS building
+FROM maven:3-amazoncorretto-21-debian AS building
 
 ENV NVM_DIR /root/.nvm
-ENV NODE_VERSION 16.15.1
-ENV MICA_BRANCH master
+ENV NODE_LTS_VERSION iron
+ENV MICA_BRANCH java21
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends devscripts debhelper build-essential fakeroot git curl
 RUN mkdir -p $NVM_DIR
 SHELL ["/bin/bash", "-c"]
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash && \
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && \
     source $NVM_DIR/nvm.sh && \
-    nvm install $NODE_VERSION && \
+    nvm install --lts=$NODE_LTS_VERSION && \
     npm install -g bower grunt && \
     echo '{ "allow_root": true }' > $HOME/.bowerrc
 
@@ -47,7 +47,7 @@ WORKDIR /projects/mica-search-es
 RUN git checkout $MICA_SEARCH_ES_BRANCH; \
     mvn clean install
 
-FROM docker.io/library/eclipse-temurin:8-jre AS server
+FROM docker.io/library/eclipse-temurin:21-jre AS server
 
 ENV MICA_ADMINISTRATOR_PASSWORD password
 ENV MICA_ANONYMOUS_PASSWORD password
