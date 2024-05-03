@@ -10,7 +10,7 @@ FROM maven:3-amazoncorretto-21-debian AS building
 
 ENV NVM_DIR /root/.nvm
 ENV NODE_LTS_VERSION iron
-ENV MICA_BRANCH java21
+ENV MICA_BRANCH master
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends devscripts debhelper build-essential fakeroot git curl
@@ -32,7 +32,7 @@ RUN source $NVM_DIR/nvm.sh; \
     mvn clean install && \
     mvn -Prelease org.apache.maven.plugins:maven-antrun-plugin:run@make-deb
 
-FROM maven:3.9.1-amazoncorretto-8-debian AS es-plugin
+FROM maven:3-amazoncorretto-21-debian AS es-plugin
 
 ENV MICA_SEARCH_ES_BRANCH master
 
@@ -62,9 +62,9 @@ RUN apt-get update && \
 WORKDIR /tmp
 COPY --from=building /projects/mica2/mica-dist/target/mica2-*-dist.zip .
 RUN cd /usr/share/ && \
-  unzip -q /tmp/mica2-*-dist.zip && \
-  rm /tmp/mica2-*-dist.zip && \
-  mv mica2-* mica2
+    unzip -q /tmp/mica2-*-dist.zip && \
+    rm /tmp/mica2-*-dist.zip && \
+    mv mica2-* mica2
 
 RUN adduser --system --home $MICA_HOME --no-create-home --disabled-password mica
 
