@@ -34,6 +34,7 @@ if [ -n "$MONGO_HOST" ]
 	do
   		sleep 1
 	done
+fi
 
 # Start mica
 /usr/share/mica2/bin/mica2
