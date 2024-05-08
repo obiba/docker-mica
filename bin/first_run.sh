@@ -36,6 +36,29 @@ anonympw=$(echo -n $MICA_ANONYMOUS_PASSWORD | xargs java -jar /usr/share/mica2/t
 cat $MICA_HOME/conf/shiro.ini | sed -e "s/^anonymous\s*=.*/anonymous=$anonympw/" > /tmp/shiro.ini && \
     mv /tmp/shiro.ini $MICA_HOME/conf/shiro.ini
 
+# Configure MongoDB
+if [ -n "$MONGODB_URI" ]
+then
+	sed s,localhost:27017/mica,$MONGODB_URI,g $MICA_HOME/conf/application.yml > /tmp/application.yml
+	mv -f /tmp/application.yml $MICA_HOME/conf/application.yml
+elif [ -n "$MONGO_HOST" ]
+	then
+  MGP=27017
+	if [ -n "$MONGO_PORT" ]
+	then
+		MGP=$MONGO_PORT
+	fi
+	MGURI="$MONGO_HOST:$MGP"
+	if [ -n "$MONGO_USER" ] && [ -n "$MONGO_PASSWORD" ]
+	then
+		MGURI="$MONGO_USER:$MONGO_PASSWORD@$MGURI/$MONGO_DB?authSource=admin"
+	else
+		MGURI="$MGURI/$MONGO_DB"
+	fi
+	sed s,localhost:27017/mica,$MGURI,g $MICA_HOME/conf/application.yml > /tmp/application.yml
+	mv -f /tmp/application.yml $MICA_HOME/conf/application.yml
+fi
+
 # Configure Opal
 if [ -n "$OPAL_HOST" ]
 	then
