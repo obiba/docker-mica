@@ -1,6 +1,9 @@
 Docker Mica
 ===========
 
+See [Mica docker image documentation](https://micadoc.obiba.org/en/latest/admin/installation.html#docker-image-installation).
+
+
 Use [docker compose](https://docs.docker.com/compose/) to launch agate and mongodb applications:
 
 ```
