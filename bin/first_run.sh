@@ -49,11 +49,16 @@ elif [ -n "$MONGO_HOST" ]
 		MGP=$MONGO_PORT
 	fi
 	MGURI="$MONGO_HOST:$MGP"
+	MGDB=mica
+	if [ -n "$MONGO_DB" ]
+	then
+		MGDB=$MONGO_DB
+	fi
 	if [ -n "$MONGO_USER" ] && [ -n "$MONGO_PASSWORD" ]
 	then
-		MGURI="$MONGO_USER:$MONGO_PASSWORD@$MGURI/$MONGO_DB?authSource=admin"
+		MGURI="$MONGO_USER:$MONGO_PASSWORD@$MGURI/$MGDB?authSource=admin"
 	else
-		MGURI="$MGURI/$MONGO_DB"
+		MGURI="$MGURI/$MGDB"
 	fi
 	sed s,localhost:27017/mica,$MGURI,g $MICA_HOME/conf/application.yml > /tmp/application.yml
 	mv -f /tmp/application.yml $MICA_HOME/conf/application.yml
