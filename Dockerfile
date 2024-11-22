@@ -40,9 +40,9 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends git
 
 WORKDIR /projects
-RUN git clone https://github.com/obiba/mica-search-es.git
+RUN git clone https://github.com/obiba/mica-search-es8.git
 
-WORKDIR /projects/mica-search-es
+WORKDIR /projects/mica-search-es8
 
 RUN git checkout $MICA_SEARCH_ES_BRANCH; \
     mvn clean install
@@ -69,7 +69,7 @@ RUN cd /usr/share/ && \
 RUN adduser --system --home $MICA_HOME --no-create-home --disabled-password mica
 
 WORKDIR $DEFAULT_PLUGINS_DIR
-COPY --from=es-plugin /projects/mica-search-es/target/mica-search-es-*-dist.zip .
+COPY --from=es-plugin /projects/mica-search-es8/target/mica-search-es8-*-dist.zip .
 
 COPY --from=gosu /usr/local/bin/gosu /usr/local/bin/
 

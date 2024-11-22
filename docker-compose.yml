@@ -1,12 +1,12 @@
-version: '3'
 services:
         mica:
-                image: obiba/mica:snapshot
-                #build: .
+                #image: obiba/mica:snapshot
+                build: .
                 ports:
                         - "8872:8082"
                 links:
                         - mongo
+                        - es8
                 environment:
                         - MICA_ADMINISTRATOR_PASSWORD=${MICA_ADMINISTRATOR_PASSWORD}
                         - MICA_ANONYMOUS_PASSWORD=${MICA_ANONYMOUS_PASSWORD}
@@ -17,6 +17,7 @@ services:
  #                       - MONGO_PASSWORD=${MICA_ADMINISTRATOR_PASSWORD}
                         - OPAL_URL=https://opal-demo.obiba.org
                         - AGATE_URL=https://agate-test.obiba.org
+                        - ELASTICSEARCH_HOST=es8
                 volumes:
                         - ${MICA_DIR}:/srv
         mongo:
@@ -24,3 +25,30 @@ services:
 #                environment:
 #                        - MONGO_INITDB_ROOT_USERNAME=mica
 #                        - MONGO_INITDB_ROOT_PASSWORD=${MICA_ADMINISTRATOR_PASSWORD}
+        es8:
+                #image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTICSEARCH_VERSION}
+                image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+                environment:
+                        - cluster.name=mica
+                        - node.name=es8
+                        - discovery.type=single-node
+                        - bootstrap.memory_lock=true
+                        - network.host=0.0.0.0
+                        - xpack.security.enabled=false
+                        - xpack.security.http.ssl.enabled=false
+                ulimits:
+                        memlock:
+                                soft: -1
+                                hard: -1
+        es-config-updater:
+                image: alpine
+                volumes:
+                        - ${MICA_DIR}:/srv
+                entrypoint: >
+                        sh -c "
+                        while [ ! -f /srv/plugins/mica-search-es8*/site.properties ]; do
+                                sleep 1;
+                        done;
+                        sed 's/localhost/es8/g' /srv/plugins/mica-search-es8*/site.properties > /tmp/site.properties &&
+                        mv /tmp/site.properties /srv/plugins/mica-search-es8*/site.properties
+                        "
