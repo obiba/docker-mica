@@ -17,7 +17,11 @@ if [ ! -d $MICA_HOME/conf ]
 	cp -r /usr/share/mica2/conf/* $MICA_HOME/conf
 	# So that application is accessible from outside of docker
 	sed s/address:\ localhost//g $MICA_HOME/conf/application.yml > /tmp/application.yml && \
+			echo "" >> /tmp/application.yml && \
+			echo "micaSearchPlugin.mica-search-es8: mica-search-es8" >> /tmp/application.yml && \
+			echo "micaSearchPlugin.updateSite: https://plugins.obiba.org" >> /tmp/application.yml && \
 	    mv /tmp/application.yml $MICA_HOME/conf/application.yml
+
 fi
 
 # Check if 1st run. Then configure database.
