@@ -93,3 +93,8 @@ elif [ -n "$AGATE_URL" ]
 	sed s,https://localhost:8444,$AGATE_URL,g $MICA_HOME/conf/application.yml > /tmp/application.yml
 	mv -f /tmp/application.yml $MICA_HOME/conf/application.yml
 fi
+
+if [ -n "$ELASTICSEARCH_HOST" ]
+then
+	/opt/mica/bin/set_elasticsearch_host.sh &
+fi
