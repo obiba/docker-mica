@@ -7,35 +7,35 @@ no_cache=false
 docker_compose_file=docker-compose.yml
 
 up:
-	sudo docker compose -f $(docker_compose_file) up -d --remove-orphans
+	docker compose -f $(docker_compose_file) up -d --remove-orphans
 
 down:
-	sudo docker compose -f $(docker_compose_file) down
+	docker compose -f $(docker_compose_file) down
 
 stop:
-	sudo docker compose -f $(docker_compose_file) stop
+	docker compose -f $(docker_compose_file) stop
 
 start:
-	sudo docker compose -f $(docker_compose_file) start
+	docker compose -f $(docker_compose_file) start
 
 restart:
-	sudo docker compose -f $(docker_compose_file) restart
+	docker compose -f $(docker_compose_file) restart
 
 pull:
-	sudo docker compose -f $(docker_compose_file) pull
+	docker compose -f $(docker_compose_file) pull
 
 logs:
-	sudo docker compose -f $(docker_compose_file) logs -f
+	docker compose -f $(docker_compose_file) logs -f
 
 build:
-	sudo docker compose -f $(docker_compose_file) build --no-cache
+	docker compose -f $(docker_compose_file) build --no-cache
 
 # Build Docker image
 build-image:
-	sudo docker build --pull --no-cache=$(no_cache) -t="obiba/mica:snapshot" .
+	docker build --pull --no-cache=$(no_cache) -t="obiba/mica:snapshot" .
 
 push-image:
-	sudo docker image push obiba/mica:snapshot
+	docker image push obiba/mica:snapshot
 
 clean:
 	sudo rm -rf target
