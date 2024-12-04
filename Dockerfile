@@ -4,9 +4,7 @@
 # https://github.com/obiba/docker-mica
 #
 
-FROM tianon/gosu:latest AS gosu
-
-FROM maven:3-amazoncorretto-21-debian AS building
+FROM maven:3.9-eclipse-temurin-21 AS building
 
 ENV NVM_DIR /root/.nvm
 ENV NODE_LTS_VERSION iron
@@ -32,7 +30,7 @@ RUN source $NVM_DIR/nvm.sh; \
     mvn clean install && \
     mvn -Prelease org.apache.maven.plugins:maven-antrun-plugin:run@make-deb
 
-FROM maven:3-amazoncorretto-21-debian AS es-plugin
+FROM maven:3.9-eclipse-temurin-21 AS es-plugin
 
 ENV MICA_SEARCH_ES_BRANCH master
 
@@ -47,7 +45,7 @@ WORKDIR /projects/mica-search-es8
 RUN git checkout $MICA_SEARCH_ES_BRANCH; \
     mvn clean install
 
-FROM docker.io/library/eclipse-temurin:21-jre AS server
+FROM docker.io/library/eclipse-temurin:21-jre-noble AS server
 
 ENV MICA_ADMINISTRATOR_PASSWORD password
 ENV MICA_ANONYMOUS_PASSWORD password
@@ -57,7 +55,7 @@ ENV DEFAULT_PLUGINS_DIR /opt/plugins
 ENV JAVA_OPTS -Xmx2G
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends unzip
+    apt-get install -y --no-install-recommends unzip gosu
 
 WORKDIR /tmp
 COPY --from=building /projects/mica2/mica-dist/target/mica2-*-dist.zip .
@@ -70,8 +68,6 @@ RUN adduser --system --home $MICA_HOME --no-create-home --disabled-password mica
 
 WORKDIR $DEFAULT_PLUGINS_DIR
 COPY --from=es-plugin /projects/mica-search-es8/target/mica-search-es8-*-dist.zip .
-
-COPY --from=gosu /usr/local/bin/gosu /usr/local/bin/
 
 COPY /bin /opt/mica/bin
 RUN chmod +x -R /opt/mica/bin; \
