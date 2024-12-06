@@ -21,7 +21,7 @@ if [ ! -d $MICA_HOME/conf ]
 fi
 
 # Upgrade configuration
-if [ -f $MICA_HOME/conf/application.yml && ! -f $MICA_HOME/conf/application-prod.yml ]
+if [[ -f $MICA_HOME/conf/application.yml && ! -f $MICA_HOME/conf/application-prod.yml ]]
 	then
 	mv -f $MICA_HOME/conf/application.yml $MICA_HOME/conf/application-prod.yml
 fi
