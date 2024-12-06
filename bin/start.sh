@@ -16,8 +16,14 @@ if [ ! -d $MICA_HOME/conf ]
 	mkdir -p $MICA_HOME/conf
 	cp -r /usr/share/mica2/conf/* $MICA_HOME/conf
 	# So that application is accessible from outside of docker
-	sed s/address:\ localhost//g $MICA_HOME/conf/application.yml > /tmp/application.yml && \
-	    mv /tmp/application.yml $MICA_HOME/conf/application.yml
+	sed s/address:\ localhost//g $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml && \
+	    mv /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
+fi
+
+# Upgrade configuration
+if [ -f $MICA_HOME/conf/application.yml && ! -f $MICA_HOME/conf/application-prod.yml ]
+	then
+	mv -f $MICA_HOME/conf/application.yml $MICA_HOME/conf/application-prod.yml
 fi
 
 # Check if 1st run. Then configure database.

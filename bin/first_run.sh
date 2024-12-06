@@ -47,8 +47,8 @@ fi
 # Configure MongoDB
 if [ -n "$MONGODB_URI" ]
 then
-	sed s,localhost:27017/mica,$MONGODB_URI,g $MICA_HOME/conf/application.yml > /tmp/application.yml
-	mv -f /tmp/application.yml $MICA_HOME/conf/application.yml
+	sed s,localhost:27017/mica,$MONGODB_URI,g $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml
+	mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
 elif [ -n "$MONGO_HOST" ]
 	then
   MGP=27017
@@ -68,30 +68,30 @@ elif [ -n "$MONGO_HOST" ]
 	else
 		MGURI="$MGURI/$MGDB"
 	fi
-	sed s,localhost:27017/mica,$MGURI,g $MICA_HOME/conf/application.yml > /tmp/application.yml
-	mv -f /tmp/application.yml $MICA_HOME/conf/application.yml
+	sed s,localhost:27017/mica,$MGURI,g $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml
+	mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
 fi
 
 # Configure Opal
 if [ -n "$OPAL_HOST" ]
 	then
-	sed s/localhost:8443/$OPAL_HOST:$OPAL_PORT/g $MICA_HOME/conf/application.yml > /tmp/application.yml
-	mv -f /tmp/application.yml $MICA_HOME/conf/application.yml
+	sed s/localhost:8443/$OPAL_HOST:$OPAL_PORT/g $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml
+	mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
 elif [ -n "$OPAL_URL" ]
 	then
-	sed s,https://localhost:8443,$OPAL_URL,g $MICA_HOME/conf/application.yml > /tmp/application.yml
-	mv -f /tmp/application.yml $MICA_HOME/conf/application.yml
+	sed s,https://localhost:8443,$OPAL_URL,g $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml
+	mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
 fi
 
 # Configure Agate
 if [ -n "$AGATE_HOST" ]
 	then
-	sed s/localhost:8444/$AGATE_HOST:$AGATE_PORT/g $MICA_HOME/conf/application.yml > /tmp/application.yml
-	mv -f /tmp/application.yml $MICA_HOME/conf/application.yml
+	sed s/localhost:8444/$AGATE_HOST:$AGATE_PORT/g $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml
+	mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
 elif [ -n "$AGATE_URL" ]
 	then
-	sed s,https://localhost:8444,$AGATE_URL,g $MICA_HOME/conf/application.yml > /tmp/application.yml
-	mv -f /tmp/application.yml $MICA_HOME/conf/application.yml
+	sed s,https://localhost:8444,$AGATE_URL,g $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml
+	mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
 fi
 
 if [ -n "$ELASTICSEARCH_HOST" ]
