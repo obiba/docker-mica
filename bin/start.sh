@@ -41,10 +41,21 @@ fi
 # Wait for MongoDB to be ready
 if [ -n "$MONGO_HOST" ]
 	then
-	until curl -i http://$MONGO_HOST:$MONGO_PORT/mica &> /dev/null
+	MGDB=mica
+	if [ -n "$MONGO_DB" ]
+	then
+		MGDB=$MONGO_DB
+	fi
+	until curl -i http://$MONGO_HOST:$MONGO_PORT/$MGDB &> /dev/null
 	do
   		sleep 1
 	done
+fi
+
+# Configure Elasticsearch
+if [ -n "$ELASTICSEARCH_HOST" ]
+then
+	/opt/mica/bin/set_elasticsearch.sh &
 fi
 
 # Start mica
