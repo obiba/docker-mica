@@ -4,10 +4,9 @@
 # https://github.com/obiba/docker-mica
 #
 
-FROM tianon/gosu:latest AS gosu
+FROM docker.io/library/eclipse-temurin:21-jre-noble AS server-released
 
-# Pull base image
-FROM docker.io/library/eclipse-temurin:8-jre AS server-released
+LABEL OBiBa <dev@obiba.org>
 
 ENV LANG C.UTF-8
 ENV LANGUAGE C.UTF-8
@@ -18,13 +17,12 @@ ENV MICA_ANONYMOUS_PASSWORD password
 ENV MICA_HOME /srv
 ENV JAVA_OPTS -Xmx2G
 
-ENV MICA_BRANCH 5.4.3
-ENV MICA_VERSION $MICA_BRANCH
+ENV MICA_VERSION 6.0.0-RC2
 
 RUN \
   apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get upgrade -y && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y apt-transport-https unzip
+  DEBIAN_FRONTEND=noninteractive apt-get install -y apt-transport-https unzip gosu
 
 # Install Mica Server
 RUN set -x && \
@@ -32,17 +30,14 @@ RUN set -x && \
   wget -q -O mica2.zip https://github.com/obiba/mica2/releases/download/${MICA_VERSION}/mica2-${MICA_VERSION}-dist.zip && \
   unzip -q mica2.zip && \
   rm mica2.zip && \
-  mv mica2-${MICA_VERSION} mica2
-
-COPY --from=gosu /usr/local/bin/gosu /usr/local/bin/
-
-RUN chmod +x /usr/share/mica2/bin/mica2
+  mv mica2-${MICA_VERSION} mica2 && \
+  chmod +x /usr/share/mica2/bin/mica2
 
 COPY ./bin /opt/mica/bin
 
-RUN chmod +x -R /opt/mica/bin
-RUN adduser --system --home $MICA_HOME --no-create-home --disabled-password mica
-RUN chown -R mica /opt/mica
+RUN chmod +x -R /opt/mica/bin && \
+  adduser --system --home $MICA_HOME --no-create-home --disabled-password mica && \
+  chown -R mica /opt/mica
 
 VOLUME $MICA_HOME
 
