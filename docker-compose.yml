@@ -5,6 +5,7 @@ services:
                         - "8882:8082"
                 links:
                         - mongo
+                        - es8
                 environment:
                         - JAVA_OPTS=-Xmx2G
                         - MICA_ADMINISTRATOR_PASSWORD=password
@@ -16,6 +17,7 @@ services:
                         - MONGO_PASSWORD=${MONGO_PASSWORD:-password}
                         - OPAL_URL=http://opal:8080
                         - AGATE_URL=http://agate:8081
+                        - ELASTICSEARCH_HOST=es8
                 volumes:
                         - /tmp/mica:/srv
         mongo:
@@ -56,3 +58,19 @@ services:
                         - RECAPTCHA_SECRET_KEY=6Lfo7gYTAAAAADym-vSDvPBeBCXaxIprA0QXLk_b
                 volumes:
                         - /tmp/agate:/srv
+        es8:
+                #image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTICSEARCH_VERSION}
+                image: docker.elastic.co/elasticsearch/elasticsearch:8.16.1
+                environment:
+                        - cluster.name=mica
+                        - node.name=es8
+                        - discovery.type=single-node
+                        - bootstrap.memory_lock=true
+                        - network.host=0.0.0.0
+                        - xpack.security.enabled=false
+                        - xpack.security.http.ssl.enabled=false
+                        - ES_JAVA_OPTS=-Xms512m -Xmx512m
+                ulimits:
+                        memlock:
+                                soft: -1
+                                hard: -1
