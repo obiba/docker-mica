@@ -15,9 +15,11 @@ ENV LC_ALL C.UTF-8
 ENV MICA_ADMINISTRATOR_PASSWORD password
 ENV MICA_ANONYMOUS_PASSWORD password
 ENV MICA_HOME /srv
+ENV MICA_DIST /usr/share/mica2
 ENV JAVA_OPTS -Xmx2G
 
 ENV MICA_VERSION 6.0.0-RC2
+ENV ES8_PLUGIN_VERSION=2.0.0-RC1
 
 RUN \
   apt-get update && \
@@ -32,6 +34,11 @@ RUN set -x && \
   rm mica2.zip && \
   mv mica2-${MICA_VERSION} mica2 && \
   chmod +x /usr/share/mica2/bin/mica2
+
+# Install ElasticSearch 8 plugin
+RUN \
+  mkdir -p $MICA_DIST/plugins && \
+  curl -L -o $MICA_DIST/plugins/mica-search-es8-${ES8_PLUGIN_VERSION}-dist.zip https://github.com/obiba/mica-search-es8/releases/download/${ES8_PLUGIN_VERSION}/mica-search-es8-${ES8_PLUGIN_VERSION}-dist.zip
 
 COPY ./bin /opt/mica/bin
 
