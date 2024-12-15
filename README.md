@@ -7,7 +7,7 @@ See [Mica docker image documentation](https://micadoc.obiba.org/en/latest/admin/
 Use [docker compose](https://docs.docker.com/compose/) to launch agate and mongodb applications:
 
 ```
-docker-compose up
+docker compose up
 ```
 
 Then connect to:

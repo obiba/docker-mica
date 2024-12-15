@@ -42,9 +42,10 @@ RUN \
 
 COPY ./bin /opt/mica/bin
 
-RUN chmod +x -R /opt/mica/bin && \
-  adduser --system --home $MICA_HOME --no-create-home --disabled-password mica && \
-  chown -R mica /opt/mica
+RUN groupadd --system --gid 10041 mica && \
+  useradd --system --home $MICA_HOME --no-create-home --uid 10041 --gid mica mica; \
+  chmod +x -R /opt/mica/bin && \
+  chown -R mica:mica /opt/mica
 
 VOLUME $MICA_HOME
 

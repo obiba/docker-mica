@@ -2,7 +2,7 @@
 # Docker helper
 #
 
-no_cache=false
+no_cache=true
 
 # Build Docker image
 build:
