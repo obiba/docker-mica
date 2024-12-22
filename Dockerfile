@@ -74,6 +74,12 @@ RUN chmod +x -R /opt/mica/bin; \
     chown -R mica /opt/mica; \
     chmod +x /usr/share/mica2/bin/mica2
 
+# Clean up
+RUN apt remove -y unzip curl wget && \
+apt autoremove -y && \
+apt clean && \
+rm -rf /var/lib/apt/lists/* /tmp/*
+
 WORKDIR $MICA_HOME
 
 VOLUME $MICA_HOME
