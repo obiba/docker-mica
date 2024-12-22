@@ -47,6 +47,12 @@ RUN groupadd --system --gid 10041 mica && \
   chmod +x -R /opt/mica/bin && \
   chown -R mica:mica /opt/mica
 
+  # Clean up
+RUN apt remove -y unzip curl wget && \
+  apt autoremove -y && \
+  apt clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/*
+
 VOLUME $MICA_HOME
 
 # http and https
