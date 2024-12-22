@@ -2,7 +2,7 @@
 # Docker helper
 #
 
-no_cache=false
+no_cache=true
 
 docker_compose_file=docker-compose.yml
 
