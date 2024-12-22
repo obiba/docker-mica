@@ -48,7 +48,7 @@ RUN groupadd --system --gid 10041 mica && \
   chown -R mica:mica /opt/mica
 
   # Clean up
-RUN apt remove -y unzip curl wget && \
+RUN apt remove -y unzip wget && \
   apt autoremove -y && \
   apt clean && \
   rm -rf /var/lib/apt/lists/* /tmp/*
