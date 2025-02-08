@@ -1,11 +1,14 @@
+version: "3.8"
 services:
         mica:
                 image: obiba/mica
                 ports:
                         - "8882:8082"
-                links:
-                        - mongo
-                        - es8
+                depends_on:
+                        es8:
+                                condition: service_healthy
+                        mongo:
+                                condition: service_healthy
                 environment:
                         - JAVA_OPTS=-Xmx2G
                         - MICA_ADMINISTRATOR_PASSWORD=password
@@ -20,17 +23,27 @@ services:
                         - ELASTICSEARCH_HOST=es8
                 volumes:
                         - /tmp/mica:/srv
+                links: # Legacy
+                        - mongo
+                        - es8
         mongo:
                 image: mongo:6.0
                 environment:
                         - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER:-obiba}
                         - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD:-password}
+                healthcheck:
+                        test: ["CMD", "mongosh", "--eval", "db.runCommand('ping').ok"]
+                        interval: 5m
+                        timeout: 30s
+                        retries: 3
+                        start_period: 60s
         opal:
                 image: obiba/opal
                 ports:
                         - "8880:8080"
-                links:
-                        - mongo
+                depends_on:
+                        mongo:
+                                condition: service_healthy
                 environment:
                         - OPAL_ADMINISTRATOR_PASSWORD=password
                         - MONGO_HOST=mongo
@@ -42,12 +55,16 @@ services:
                         - ROCK_HOSTS=rock:8085
                 volumes:
                         - /tmp/opal:/srv
+                links: # Keeping links for legacy reasons, but depends_on is preferred
+                        - mongo
+
         agate:
                 image: obiba/agate
                 ports:
                         - "8881:8081"
-                links:
-                        - mongo
+                depends_on:
+                        mongo:
+                                condition: service_healthy
                 environment:
                         - AGATE_ADMINISTRATOR_PASSWORD=password
                         - MONGO_HOST=mongo
@@ -59,14 +76,15 @@ services:
                         - RECAPTCHA_SECRET_KEY=6Lfo7gYTAAAAADym-vSDvPBeBCXaxIprA0QXLk_b
                 volumes:
                         - /tmp/agate:/srv
+                links: # Keeping links for legacy reasons, but depends_on is preferred
+                        - mongo
         rock:
                 image: obiba/rock
         es8:
-                #image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTICSEARCH_VERSION}
                 image: docker.elastic.co/elasticsearch/elasticsearch:8.16.1
                 expose:
-                        - 9300:9300
-                        - 9200:9200
+                        - 9200
+                        - 9300
                 environment:
                         - cluster.name=mica
                         - node.name=es8
@@ -80,3 +98,9 @@ services:
                         memlock:
                                 soft: -1
                                 hard: -1
+                healthcheck:
+                        test: ["CMD-SHELL", "curl -s -f http://localhost:9200/_cluster/health || exit 1"]
+                        interval: 5m
+                        timeout: 30s
+                        retries: 3
+                        start_period: 60s
