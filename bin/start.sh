@@ -38,20 +38,6 @@ if [ -e /opt/mica/bin/first_run.sh ]
     mv /opt/mica/bin/first_run.sh /opt/mica/bin/first_run.sh.done
 fi
 
-# Wait for MongoDB to be ready
-if [ -n "$MONGO_HOST" ]
-	then
-	MGDB=mica
-	if [ -n "$MONGO_DB" ]
-	then
-		MGDB=$MONGO_DB
-	fi
-	until curl -i http://$MONGO_HOST:$MONGO_PORT/$MGDB &> /dev/null
-	do
-  		sleep 1
-	done
-fi
-
 # Configure Elasticsearch
 if [ -n "$ELASTICSEARCH_HOST" ]
 then
