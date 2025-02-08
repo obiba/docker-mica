@@ -18,8 +18,9 @@ ENV MICA_HOME /srv
 ENV MICA_DIST /usr/share/mica2
 ENV JAVA_OPTS -Xmx2G
 
-ENV MICA_VERSION 6.0.0-RC3
-ENV ES8_PLUGIN_VERSION=2.0.0-RC1
+ENV MICA_VERSION 6.0.0
+ENV ES8_PLUGIN_VERSION=2.0.0
+ENV SPSS_PLUGIN_VERSION=2.0.0
 
 RUN \
   apt-get update && \
@@ -35,10 +36,12 @@ RUN set -x && \
   mv mica2-${MICA_VERSION} mica2 && \
   chmod +x /usr/share/mica2/bin/mica2
 
-# Install ElasticSearch 8 plugin
+# Install plugins
 RUN \
   mkdir -p $MICA_DIST/plugins && \
-  curl -L -o $MICA_DIST/plugins/mica-search-es8-${ES8_PLUGIN_VERSION}-dist.zip https://github.com/obiba/mica-search-es8/releases/download/${ES8_PLUGIN_VERSION}/mica-search-es8-${ES8_PLUGIN_VERSION}-dist.zip
+  curl -L -o $MICA_DIST/plugins/mica-search-es8-${ES8_PLUGIN_VERSION}-dist.zip https://github.com/obiba/mica-search-es8/releases/download/${ES8_PLUGIN_VERSION}/mica-search-es8-${ES8_PLUGIN_VERSION}-dist.zip  && \
+  mkdir -p $MICA_DIST/plugins && \
+  curl -L -o $MICA_DIST/plugins/mica-tables-spss-${SPSS_PLUGIN_VERSION}-dist.zip https://github.com/obiba/mica-tables-spss/releases/download/${SPSS_PLUGIN_VERSION}/mica-tables-spss-${SPSS_PLUGIN_VERSION}-dist.zip
 
 COPY ./bin /opt/mica/bin
 
@@ -47,7 +50,7 @@ RUN groupadd --system --gid 10041 mica && \
   chmod +x -R /opt/mica/bin && \
   chown -R mica:mica /opt/mica
 
-  # Clean up
+# Clean up
 RUN apt remove -y unzip wget && \
   apt autoremove -y && \
   apt clean && \
