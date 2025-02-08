@@ -39,6 +39,7 @@ services:
                         - MONGO_PASSWORD=${MONGO_PASSWORD:-password}
                         - MONGODATA_DATABASE=opal
                         - AGATE_URL=http://agate:8081
+                        - ROCK_HOSTS=rock:8085
                 volumes:
                         - /tmp/opal:/srv
         agate:
@@ -58,9 +59,14 @@ services:
                         - RECAPTCHA_SECRET_KEY=6Lfo7gYTAAAAADym-vSDvPBeBCXaxIprA0QXLk_b
                 volumes:
                         - /tmp/agate:/srv
+        rock:
+                image: obiba/rock
         es8:
                 #image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTICSEARCH_VERSION}
                 image: docker.elastic.co/elasticsearch/elasticsearch:8.16.1
+                expose:
+                        - 9300:9300
+                        - 9200:9200
                 environment:
                         - cluster.name=mica
                         - node.name=es8
