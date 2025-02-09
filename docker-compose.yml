@@ -3,9 +3,11 @@ services:
                 image: obiba/mica
                 ports:
                         - "8882:8082"
-                links:
+                depends_on:
                         - mongo
                         - es8
+                        - agate
+                        - opal
                 environment:
                         - JAVA_OPTS=-Xmx2G
                         - MICA_ADMINISTRATOR_PASSWORD=password
@@ -29,8 +31,9 @@ services:
                 image: obiba/opal
                 ports:
                         - "8880:8080"
-                links:
+                depends_on:
                         - mongo
+                        - rock
                 environment:
                         - OPAL_ADMINISTRATOR_PASSWORD=password
                         - MONGO_HOST=mongo
@@ -46,7 +49,7 @@ services:
                 image: obiba/agate
                 ports:
                         - "8881:8081"
-                links:
+                depends_on:
                         - mongo
                 environment:
                         - AGATE_ADMINISTRATOR_PASSWORD=password
@@ -65,8 +68,8 @@ services:
                 #image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTICSEARCH_VERSION}
                 image: docker.elastic.co/elasticsearch/elasticsearch:8.16.1
                 expose:
-                        - 9300:9300
-                        - 9200:9200
+                        - 9300
+                        - 9200
                 environment:
                         - cluster.name=mica
                         - node.name=es8
