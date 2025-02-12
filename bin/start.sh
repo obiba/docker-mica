@@ -20,6 +20,13 @@ if [ ! -d $MICA_HOME/conf ]
 	    mv /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
 fi
 
+# Make sure plugins folder is available
+if [ ! -d $MICA_HOME/plugins ]
+	then
+	mkdir -p $MICA_HOME/plugins
+	cp -r /usr/share/mica2/plugins/* $MICA_HOME/plugins
+fi
+
 # Upgrade configuration
 if [[ -f $MICA_HOME/conf/application.yml && ! -f $MICA_HOME/conf/application-prod.yml ]]
 	then

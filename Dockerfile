@@ -40,8 +40,10 @@ RUN set -x && \
 RUN \
   mkdir -p $MICA_DIST/plugins && \
   curl -L -o $MICA_DIST/plugins/mica-search-es8-${ES8_PLUGIN_VERSION}-dist.zip https://github.com/obiba/mica-search-es8/releases/download/${ES8_PLUGIN_VERSION}/mica-search-es8-${ES8_PLUGIN_VERSION}-dist.zip  && \
-  mkdir -p $MICA_DIST/plugins && \
-  curl -L -o $MICA_DIST/plugins/mica-tables-spss-${SPSS_PLUGIN_VERSION}-dist.zip https://github.com/obiba/mica-tables-spss/releases/download/${SPSS_PLUGIN_VERSION}/mica-tables-spss-${SPSS_PLUGIN_VERSION}-dist.zip
+  unzip $MICA_DIST/plugins/mica-search-es8-${ES8_PLUGIN_VERSION}-dist.zip -d $MICA_DIST/plugins && \
+  curl -L -o $MICA_DIST/plugins/mica-tables-spss-${SPSS_PLUGIN_VERSION}-dist.zip https://github.com/obiba/mica-tables-spss/releases/download/${SPSS_PLUGIN_VERSION}/mica-tables-spss-${SPSS_PLUGIN_VERSION}-dist.zip && \
+  unzip $MICA_DIST/plugins/mica-tables-spss-${SPSS_PLUGIN_VERSION}-dist.zip -d $MICA_DIST/plugins && \
+  rm $MICA_DIST/plugins/*.zip
 
 COPY ./bin /opt/mica/bin
 
