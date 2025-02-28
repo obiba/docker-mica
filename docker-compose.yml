@@ -4,7 +4,7 @@ services:
                 #build: .
                 ports:
                         - "8872:8082"
-                links:
+                depends_on:
                         - mongo
                         - es8
                 environment:
@@ -27,7 +27,10 @@ services:
 #                        - MONGO_INITDB_ROOT_PASSWORD=${MICA_ADMINISTRATOR_PASSWORD}
         es8:
                 #image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTICSEARCH_VERSION}
-                image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+                image: docker.elastic.co/elasticsearch/elasticsearch:8.16.1
+                expose:
+                        - 9300
+                        - 9200
                 environment:
                         - cluster.name=mica
                         - node.name=es8
