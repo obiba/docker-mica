@@ -4,7 +4,7 @@
 # https://github.com/obiba/docker-mica
 #
 
-FROM docker.io/library/eclipse-temurin:21-jre-noble AS server-released
+FROM docker.io/library/eclipse-temurin:25-jre-noble AS server-released
 
 LABEL OBiBa <dev@obiba.org>
 
@@ -18,7 +18,7 @@ ENV MICA_HOME /srv
 ENV MICA_DIST /usr/share/mica2
 ENV JAVA_OPTS -Xmx2G
 
-ENV MICA_VERSION 6.2.1
+ENV MICA_VERSION 6.3.0
 ENV ES8_PLUGIN_VERSION=2.0.1
 ENV SPSS_PLUGIN_VERSION=2.0.0
 
