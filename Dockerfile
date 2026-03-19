@@ -25,7 +25,9 @@ ENV SPSS_PLUGIN_VERSION=2.0.0
 RUN \
   apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get upgrade -y && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y apt-transport-https unzip gosu wget
+  DEBIAN_FRONTEND=noninteractive apt-get install -y gosu apt-transport-https wget unzip curl libcurl4-openssl-dev libssl-dev && \
+  apt-get clean &&  \
+  rm -rf /var/lib/apt/lists/*
 
 # Install Mica Server
 RUN set -x && \
