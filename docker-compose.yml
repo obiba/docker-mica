@@ -1,6 +1,6 @@
 services:
         mica:
-                image: obiba/mica
+                image: obiba/mica:6.2
                 ports:
                         - "8882:8082"
                 depends_on:
