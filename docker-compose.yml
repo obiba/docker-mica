@@ -4,10 +4,14 @@ services:
                 ports:
                         - "8882:8082"
                 depends_on:
-                        - mongo
-                        - es8
-                        - agate
-                        - opal
+                        mongo:
+                                condition: service_healthy
+                        es8:
+                                condition: service_started
+                        agate:
+                                condition: service_started
+                        opal:
+                                condition: service_started
                 environment:
                         - JAVA_OPTS=-Xmx2G
                         - MICA_ADMINISTRATOR_PASSWORD=password
@@ -23,17 +27,25 @@ services:
                 volumes:
                         - /tmp/mica:/srv
         mongo:
-                image: mongo:6.0
+                image: mongo:8
                 environment:
                         - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER:-obiba}
                         - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD:-password}
+                healthcheck:
+                        test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/admin --quiet -u ${MONGO_USER:-obiba} -p ${MONGO_PASSWORD:-password} --authenticationDatabase admin
+                        interval: 5s
+                        timeout: 5s
+                        retries: 20
+                        start_period: 30s
         opal:
                 image: obiba/opal
                 ports:
                         - "8880:8080"
                 depends_on:
-                        - mongo
-                        - rock
+                        mongo:
+                                condition: service_healthy
+                        rock:
+                                condition: service_started
                 environment:
                         - OPAL_ADMINISTRATOR_PASSWORD=password
                         - MONGO_HOST=mongo
@@ -50,7 +62,8 @@ services:
                 ports:
                         - "8881:8081"
                 depends_on:
-                        - mongo
+                        mongo:
+                                condition: service_healthy
                 environment:
                         - AGATE_ADMINISTRATOR_PASSWORD=password
                         - MONGO_HOST=mongo
