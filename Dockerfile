@@ -6,12 +6,14 @@
 
 FROM maven:3.9-eclipse-temurin-21 AS building
 
-ENV NVM_DIR /root/.nvm
-ENV NODE_LTS_VERSION iron
-ENV MICA_BRANCH master
+ARG MICA_BRANCH=master
+
+ENV NVM_DIR=/root/.nvm
+ENV NODE_LTS_VERSION=iron
+ENV MICA_BRANCH=${MICA_BRANCH}
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends devscripts debhelper build-essential fakeroot git curl
+    apt-get install -y --no-install-recommends git curl
 RUN mkdir -p $NVM_DIR
 SHELL ["/bin/bash", "-c"]
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && \
@@ -27,12 +29,11 @@ WORKDIR /projects/mica2
 
 RUN source $NVM_DIR/nvm.sh; \
     git checkout $MICA_BRANCH && \
-    mvn clean install && \
-    mvn -Prelease org.apache.maven.plugins:maven-antrun-plugin:run@make-deb
+    mvn clean install
 
 FROM maven:3.9-eclipse-temurin-21 AS es-plugin
 
-ENV MICA_SEARCH_ES_BRANCH master
+ARG MICA_SEARCH_ES_BRANCH=2.0.2
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends git
@@ -42,49 +43,81 @@ RUN git clone https://github.com/obiba/mica-search-es8.git
 
 WORKDIR /projects/mica-search-es8
 
-RUN git checkout $MICA_SEARCH_ES_BRANCH; \
+RUN git checkout $MICA_SEARCH_ES_BRANCH && \
     mvn clean install
 
-FROM docker.io/library/eclipse-temurin:21-jre-noble AS server
+FROM maven:3.9-eclipse-temurin-21 AS spss-plugin
 
-ENV MICA_ADMINISTRATOR_PASSWORD password
-ENV MICA_ANONYMOUS_PASSWORD password
-ENV MICA_HOME /srv
-ENV MICA_DIST /usr/share/mica2
-ENV DEFAULT_PLUGINS_DIR /opt/plugins
-ENV JAVA_OPTS -Xmx2G
+ARG MICA_SPSS_BRANCH=2.0.0
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends unzip gosu
+    apt-get install -y --no-install-recommends git
 
-WORKDIR /tmp
-COPY --from=building /projects/mica2/mica-dist/target/mica2-*-dist.zip .
-RUN cd /usr/share/ && \
-    unzip -q /tmp/mica2-*-dist.zip && \
-    rm /tmp/mica2-*-dist.zip && \
-    mv mica2-* mica2
+WORKDIR /projects
+RUN git clone https://github.com/obiba/mica-tables-spss.git
 
-RUN adduser --system --home $MICA_HOME --no-create-home --disabled-password mica
+WORKDIR /projects/mica-tables-spss
 
-WORKDIR $DEFAULT_PLUGINS_DIR
-COPY --from=es-plugin /projects/mica-search-es8/target/mica-search-es8-*-dist.zip .
+RUN git checkout $MICA_SPSS_BRANCH && \
+    mvn clean install
 
-COPY /bin /opt/mica/bin
-RUN chmod +x -R /opt/mica/bin; \
-    chown -R mica /opt/mica; \
-    chmod +x /usr/share/mica2/bin/mica2
+FROM docker.io/library/eclipse-temurin:25-jre-noble AS server-released
+
+LABEL OBiBa=<dev@obiba.org>
+
+ENV LANG=C.UTF-8
+ENV LANGUAGE=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
+ENV MICA_HOME=/srv
+ENV MICA_DIST=/usr/share/mica2
+ENV JAVA_OPTS=-Xmx2G
+
+RUN \
+  apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get upgrade -y && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y gosu apt-transport-https wget unzip curl libcurl4-openssl-dev libssl-dev && \
+  apt-get clean &&  \
+  rm -rf /var/lib/apt/lists/*
+
+# Install Mica Server (built from source above)
+RUN mkdir -p /tmp/mica2-dist
+COPY --from=building /projects/mica2/mica-dist/target/mica2-*-dist.zip /tmp/mica2-dist/mica2.zip
+RUN set -x && \
+  cd /usr/share/ && \
+  unzip -q /tmp/mica2-dist/mica2.zip && \
+  rm -rf /tmp/mica2-dist && \
+  mv mica2-* mica2 && \
+  chmod +x /usr/share/mica2/bin/mica2
+
+# Install plugins
+RUN mkdir -p $MICA_DIST/plugins
+COPY --from=es-plugin /projects/mica-search-es8/target/mica-search-es8-*-dist.zip $MICA_DIST/plugins/mica-search-es8-dist.zip
+COPY --from=spss-plugin /projects/mica-tables-spss/target/mica-tables-spss-*-dist.zip $MICA_DIST/plugins/mica-tables-spss-dist.zip
+RUN \
+  unzip $MICA_DIST/plugins/mica-search-es8-dist.zip -d $MICA_DIST/plugins && \
+  unzip $MICA_DIST/plugins/mica-tables-spss-dist.zip -d $MICA_DIST/plugins && \
+  rm $MICA_DIST/plugins/*.zip
+
+COPY ./bin /opt/mica/bin
+
+RUN groupadd --system --gid 10041 mica && \
+  useradd --system --home $MICA_HOME --no-create-home --uid 10041 --gid mica mica; \
+  chmod +x -R /opt/mica/bin && \
+  chown -R mica:mica /opt/mica
 
 # Clean up
-RUN apt remove -y unzip wget && \
-apt autoremove -y && \
-apt clean && \
-rm -rf /var/lib/apt/lists/* /tmp/*
-
-WORKDIR $MICA_HOME
+RUN apt remove -y unzip wget curl && \
+  apt autoremove -y && \
+  apt clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/*
 
 VOLUME $MICA_HOME
+
+# http and https
 EXPOSE 8082 8445
 
+# Define default command.
 COPY ./docker-entrypoint.sh /
-ENTRYPOINT ["/bin/bash" ,"/docker-entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["app"]

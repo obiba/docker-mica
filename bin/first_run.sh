@@ -28,21 +28,13 @@ fi
 
 # Configure administrator password
 adminpw=$(echo -n $MICA_ADMINISTRATOR_PASSWORD | xargs java -jar /usr/share/mica2/tools/lib/obiba-password-hasher-*-cli.jar)
-cat $MICA_HOME/conf/shiro.ini | sed -e "s,^administrator\s*=.*\,,administrator=$adminpw\,," > /tmp/shiro.ini && \
+cat $MICA_HOME/conf/shiro.ini | sed -e "s|^administrator\s*=.*,|administrator=\"$adminpw\",|" > /tmp/shiro.ini && \
     mv /tmp/shiro.ini $MICA_HOME/conf/shiro.ini
 
 # Configure anonymous password
 anonympw=$(echo -n $MICA_ANONYMOUS_PASSWORD | xargs java -jar /usr/share/mica2/tools/lib/obiba-password-hasher-*-cli.jar)
-cat $MICA_HOME/conf/shiro.ini | sed -e "s/^anonymous\s*=.*/anonymous=$anonympw/" > /tmp/shiro.ini && \
+cat $MICA_HOME/conf/shiro.ini | sed -e "s|^anonymous\s*=.*,|anonymous=\"$anonympw\",|" > /tmp/shiro.ini && \
     mv /tmp/shiro.ini $MICA_HOME/conf/shiro.ini
-
-# Install default plugins
-if [ ! -d $MICA_HOME/plugins ]
-then
-	echo "Preparing default plugins in $MICA_HOME ..."
-	mkdir -p $MICA_HOME/plugins
-	cp -r $DEFAULT_PLUGINS_DIR/* $MICA_HOME/plugins
-fi
 
 # Configure MongoDB
 if [ -n "$MONGODB_URI" ]
@@ -73,28 +65,37 @@ elif [ -n "$MONGO_HOST" ]
 fi
 
 # Configure Opal
-if [ -n "$OPAL_HOST" ]
+if [ -n "$OPAL_URL" ]
 	then
-	sed s/localhost:8443/$OPAL_HOST:$OPAL_PORT/g $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml
-	mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
-elif [ -n "$OPAL_URL" ]
+	sed -e "/^opal:/,/^[a-z]/ s|^\(\s*url:\s*\).*|\1$OPAL_URL|" $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml && \
+	    mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
+elif [ -n "$OPAL_HOST" ]
 	then
-	sed s,https://localhost:8443,$OPAL_URL,g $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml
-	mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
+	OPAL_URL="http://$OPAL_HOST:${OPAL_PORT:-8080}"
+	sed -e "/^opal:/,/^[a-z]/ s|^\(\s*url:\s*\).*|\1$OPAL_URL|" $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml && \
+	    mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
+fi
+
+# Configure Opal credentials
+if [ -n "$OPAL_USERNAME" ]
+	then
+	sed -e "/^opal:/,/^[a-z]/ s|^\(\s*username:\s*\).*|\1$OPAL_USERNAME|" $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml && \
+	    mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
+fi
+if [ -n "$OPAL_PASSWORD" ]
+	then
+	sed -e "/^opal:/,/^[a-z]/ s|^\(\s*password:\s*\).*|\1$OPAL_PASSWORD|" $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml && \
+	    mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
 fi
 
 # Configure Agate
-if [ -n "$AGATE_HOST" ]
+if [ -n "$AGATE_URL" ]
 	then
-	sed s/localhost:8444/$AGATE_HOST:$AGATE_PORT/g $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml
-	mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
-elif [ -n "$AGATE_URL" ]
+	sed -e "/^agate:/,/^[a-z]/ s|^\(\s*url:\s*\).*|\1$AGATE_URL|" $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml && \
+	    mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
+elif [ -n "$AGATE_HOST" ]
 	then
-	sed s,https://localhost:8444,$AGATE_URL,g $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml
-	mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
-fi
-
-if [ -n "$ELASTICSEARCH_HOST" ]
-then
-	/opt/mica/bin/set_elasticsearch_host.sh &
+	AGATE_URL="http://$AGATE_HOST:${AGATE_PORT:-8081}"
+	sed -e "/^agate:/,/^[a-z]/ s|^\(\s*url:\s*\).*|\1$AGATE_URL|" $MICA_HOME/conf/application-prod.yml > /tmp/application-prod.yml && \
+	    mv -f /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
 fi

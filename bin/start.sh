@@ -20,9 +20,21 @@ if [ ! -d $MICA_HOME/conf ]
 	    mv /tmp/application-prod.yml $MICA_HOME/conf/application-prod.yml
 fi
 
+# Make sure plugins folder is available
+if [ ! -d $MICA_HOME/plugins ]
+	then
+	mkdir -p $MICA_HOME/plugins
+	cp -r /usr/share/mica2/plugins/* $MICA_HOME/plugins
+fi
+
 # Upgrade configuration
 if [[ -f $MICA_HOME/conf/application.yml && ! -f $MICA_HOME/conf/application-prod.yml ]]
 	then
+	if grep -q "profiles:" $MICA_HOME/conf/application.yml
+		then
+			cp $MICA_HOME/conf/application.yml $MICA_HOME/conf/application.yml.5.x
+			cat $MICA_HOME/conf/application.yml.5.x | grep -v "profiles:" > $MICA_HOME/conf/application.yml
+	fi
 	mv -f $MICA_HOME/conf/application.yml $MICA_HOME/conf/application-prod.yml
 fi
 
@@ -33,13 +45,10 @@ if [ -e /opt/mica/bin/first_run.sh ]
     mv /opt/mica/bin/first_run.sh /opt/mica/bin/first_run.sh.done
 fi
 
-# Wait for MongoDB to be ready
-if [ -n "$MONGO_HOST" ]
-	then
-	until curl -i http://$MONGO_HOST:$MONGO_PORT/mica &> /dev/null
-	do
-  		sleep 1
-	done
+# Configure Elasticsearch
+if [ -n "$ELASTICSEARCH_HOST" ]
+then
+	/opt/mica/bin/set_elasticsearch.sh &
 fi
 
 # Start mica

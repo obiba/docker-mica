@@ -3,6 +3,7 @@
 #
 
 no_cache=true
+tag=snapshot
 
 docker_compose_file=docker-compose.yml
 
@@ -27,15 +28,12 @@ pull:
 logs:
 	docker compose -f $(docker_compose_file) logs -f
 
-build:
-	docker compose -f $(docker_compose_file) build --no-cache
-
 # Build Docker image
-build-image:
-	docker build --pull --no-cache=$(no_cache) -t="obiba/mica:snapshot" .
+build:
+	docker build --pull --no-cache=$(no_cache) -t="obiba/mica:$(tag)" .
 
-push-image:
-	docker image push obiba/mica:snapshot
+push:
+	docker image push obiba/mica:$(tag)
 
 clean:
 	sudo rm -rf target
