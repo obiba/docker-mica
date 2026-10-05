@@ -9,14 +9,14 @@ FROM maven:3.9-eclipse-temurin-21 AS building
 ARG MICA_BRANCH=master
 
 ENV NVM_DIR=/root/.nvm
-ENV NODE_LTS_VERSION=iron
+ENV NODE_LTS_VERSION=krypton
 ENV MICA_BRANCH=${MICA_BRANCH}
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends git curl
 RUN mkdir -p $NVM_DIR
 SHELL ["/bin/bash", "-c"]
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && \
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.8/install.sh | bash && \
     source $NVM_DIR/nvm.sh && \
     nvm install --lts=$NODE_LTS_VERSION && \
     npm install -g bower grunt && \
