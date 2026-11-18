@@ -13,7 +13,7 @@ ENV NODE_LTS_VERSION=krypton
 ENV MICA_BRANCH=${MICA_BRANCH}
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends git curl
+    apt-get install -y --no-install-recommends git curl libatomic1
 RUN mkdir -p $NVM_DIR
 SHELL ["/bin/bash", "-c"]
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.8/install.sh | bash && \
