@@ -52,4 +52,4 @@ then
 fi
 
 # Start mica
-/usr/share/mica2/bin/mica2
+exec /usr/share/mica2/bin/mica2
